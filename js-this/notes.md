@@ -1,0 +1,122 @@
+## Javascript `this` keyword.
+
+ - The `this` keyword refers to the global object `window` when evaluated in the global context.
+ - That is `this === window` evaluates to true.
+ - In node `this === global` evaluate to true.
+ 
+- In strict mode 
+    ```javascript
+        
+        function func() {
+          console.log(this === undefined);
+        }
+
+        func() //true
+
+    ```
+
+- In non-strict mode:
+
+    ```javascript
+        
+        function func() {
+          console.log(this === global);
+        }
+
+        func() //true
+
+    ```
+- In non-strict mode:
+    ```javascript
+      
+      function Person (firstName, lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName
+      }
+
+      const profile = Person("Jake", "Archibald");
+      console.log(profile); //undefined
+    
+    ```
+    This is because firstName and lastName were assigned to global
+    Thus, console.log(global.firstName) prints "Jake";
+
+- In strict mode:
+    ```javascript
+      
+      function Person (firstName, lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName
+      }
+
+      const profile = Person("Jake", "Archibald");
+      console.log(profile); //throws an error, thus preventing you from assigning to global.
+    
+    ```
+
+- The uppercase letter starting the Person function hints to us that Person is a constructor.
+- To get the desired result i.e making objects off the factory(constructor function), we use the `new` keyword.
+- In strict/non-strict mode:
+    ```javascript
+      
+      const profile =  new Person("Jake", "Archibald");
+      console.log(profile) // Person {firstName: "Jake", lastName: "Archibald"}
+    ```
+
+- `this` in a method refers to the object within which it exists.
+
+    ```javascript
+
+    const Person = {
+      name: Frank,
+      greetFrank(){
+        console.log(`Hello {this.name}`)
+      }
+    }
+
+    Person.greetPerson(); //Hello Frank
+    ```
+- `this` might lose its intended context in the following:
+
+    ```javascript
+
+    const Person = {
+      name: Frank,
+      greetFrank(){
+        console.log(`Hello {this.name}`)
+      }
+    }
+
+    setTimeout(Person.greetPerson, 1000); //Hello undefined
+    ```
+    This is because this now refers to global
+    This can be resolved using the bind keyword.
+
+- Using bind: 
+
+    ```javascript
+
+    const Person = {
+      name: Frank,
+      greetFrank(){
+        console.log(`Hello {this.name}`)
+      }
+    }
+
+    setTimeout(Person.greetPerson.bind(Person), 1000); //Hello Frank (after one second).
+    ```
+- Using call:
+  Having created a function outside of an object, it can leverage the capacity of a method using the call function. The `call` method is defined on the Function prototype.
+
+  ```javascript
+
+     function greetFrank(){
+        console.log(`Hello {this.name}`)
+      }
+
+      const Person = {
+        name: Frank;
+      }
+
+      greetFrank.call(Person) //Hello Frank
+      ```
